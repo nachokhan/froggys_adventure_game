@@ -48,7 +48,7 @@ You'll also need Pygame. But don't worry, it's included in our requirements!
    ```
 2. Navigate to the game's directory:
    ```
-   cd path-to-froggys-adventure
+   cd froggys_adventure_game
    ```
 3. Install the required packages:
    ```
