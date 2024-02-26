@@ -1,0 +1,78 @@
+{
+    "metadata": {
+        "project_name": "FroggyGame",
+        "prompt": "pstruc . -o froggy_game -f json -ip '.env','.git','prompt.txt','froggy_game.json','*pycache*' -igi -fc '*.py','*.txt'",
+        "options": {
+            "files_ignored_patterns": [
+                "prompt.txt",
+                "*pycache*",
+                "froggy_game.json",
+                ".git",
+                ".env"
+            ],
+            "fileS_content_added_patterns": [
+                "*.py",
+                "*.txt"
+            ],
+            "bash_options": {
+                "format": "json",
+                "directory": ".",
+                "output": "froggy_game",
+                "ignore_patterns": [
+                    ".env",
+                    ".git",
+                    "prompt.txt",
+                    "froggy_game.json",
+                    "*pycache*"
+                ],
+                "ignore_files": null,
+                "ignore_gitignore": true,
+                "file_add_content": [
+                    "*.py",
+                    "*.txt"
+                ]
+            }
+        }
+    },
+    "structure": {
+        ".": {
+            "config.py": "# Configuraciones generales del juego\nBOARD_SIZE = 15\nWINDOW_WIDTH = 750\nWINDOW_HEIGHT = 750\nTILE_SIZE = 50  # Tama\u00f1o de cada casilla en p\u00edxeles",
+            "requirements.txt": "pygame==2.5.2\n",
+            "main.py": "import pygame\nfrom src.game_window import GameWindow\n\n\ndef main():\n    pygame.init()\n    game_window = GameWindow()\n    game_window.run_game()\n\n\nif __name__ == \"__main__\":\n    main()\n"
+        },
+        ".vscode": {
+            "launch.json": null
+        },
+        "assets": {
+            "images": {
+                "filled_bottle.png": null,
+                "open_door.png": null,
+                "empty_bottle.png": null,
+                "froggy.png": null,
+                "rock.png": null,
+                "closed_door.png": null
+            },
+            "sounds": {}
+        },
+        "src": {
+            "game_window.py": "import pygame\nfrom src.game_board import GameBoard\nfrom config import WINDOW_HEIGHT, WINDOW_WIDTH\n\n\nclass GameWindow:\n    def __init__(self):\n        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))\n        self.game_board = GameBoard()\n        self.congratulations_font = pygame.font.SysFont(None, 100)  # Fuente para el cartel de felicitaciones\n\n    def run_game(self):\n        running = True\n        level = self.game_board.level\n        froggy = level.froggy\n        while running:\n            for event in pygame.event.get():\n                if event.type == pygame.QUIT:\n                    running = False\n\n                elif event.type == pygame.KEYDOWN:\n\n                    if level.finished:\n                        self.show_congratulations()\n                        self.game_board.level_n += 1\n                        self.game_board.load_level(self.game_board.level_n)\n                        level = self.game_board.level\n                        froggy = level.froggy\n                        break\n\n                    # Move Froggy when arrow keys are pressed\n                    if event.key == pygame.K_LEFT:\n                        froggy.move(\"left\", level)\n                    elif event.key == pygame.K_RIGHT:\n                        froggy.move(\"right\", level)\n                    elif event.key == pygame.K_UP:\n                        froggy.move(\"up\", level)\n                    elif event.key == pygame.K_DOWN:\n                        froggy.move(\"down\", level)\n\n            self.screen.fill((0, 0, 0))\n            self.game_board.draw(self.screen)\n            pygame.display.flip()\n\n        pygame.quit()\n\n    def show_congratulations(self):\n        # Mostrar el cartel de felicitaciones en el centro de la pantalla\n        text = self.congratulations_font.render(\"Congratulations!\", True, (255, 255, 255))\n        text_rect = text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))\n        self.screen.blit(text, text_rect)\n        pygame.display.flip()\n\n        # Esperar a que se presione una tecla\n        waiting = True\n        while waiting:\n            for event in pygame.event.get():\n                if event.type == pygame.KEYDOWN:\n                    waiting = False\n",
+            "game_board.py": "from src.levels.level import Level\n\n\nclass GameBoard:\n    def __init__(self):\n        self.level_n = 1\n        self.load_level(self.level_n)\n\n    def load_level(self, number):\n        self.level = Level(number)\n        self.level_n = number\n        self.level.load_level()\n\n    def draw(self, screen):\n        self.level.door.draw(screen)\n        for rock in self.level.rocks:\n            rock.draw(screen)\n        for bottle in self.level.bottles:\n            bottle.draw(screen)\n        self.level.froggy.draw(screen)\n",
+            "game_objects": {
+                "froggy.py": "import pygame\nfrom config import TILE_SIZE\n\n\nclass Froggy:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n        self.image = pygame.image.load(\"assets/images/froggy.png\")\n        self.image = pygame.transform.scale(self.image, (TILE_SIZE, TILE_SIZE))\n\n    def move(self, direction, level):\n        new_x, new_y = self.x, self.y\n        if direction == \"up\":\n            new_y -= 1\n        elif direction == \"down\":\n            new_y += 1\n        elif direction == \"left\":\n            new_x -= 1\n        elif direction == \"right\":\n            new_x += 1\n\n        if level.is_move_valid(new_x, new_y):\n            self.x, self.y = new_x, new_y\n            level.check_item_at(new_x, new_y)\n            level.check_completion()\n\n    def draw(self, screen):\n        screen.blit(self.image, (self.x * TILE_SIZE, self.y * TILE_SIZE))\n",
+                "door.py": "import pygame\nfrom config import TILE_SIZE\n\n\nclass Door:\n    def __init__(self, x, y, is_open=False):\n        self.x = x\n        self.y = y\n        self.is_open = is_open\n        self.image_open = pygame.image.load(\"assets/images/open_door.png\")\n        self.image_closed = pygame.image.load(\"assets/images/closed_door.png\")\n        self.image_open = pygame.transform.scale(self.image_open, (TILE_SIZE, TILE_SIZE))\n        self.image_closed = pygame.transform.scale(self.image_closed, (TILE_SIZE, TILE_SIZE))\n\n    def draw(self, screen):\n        if self.is_open:\n            screen.blit(self.image_open, (self.x * TILE_SIZE, self.y * TILE_SIZE))\n        else:\n            screen.blit(self.image_closed, (self.x * TILE_SIZE, self.y * TILE_SIZE))\n\n    def open_door(self):\n        self.is_open = True\n",
+                "rock.py": "import pygame\nfrom config import TILE_SIZE\n\n\nclass Rock:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n        self.image = pygame.image.load(\"assets/images/rock.png\")  # Carga la imagen de la roca\n        self.image = pygame.transform.scale(self.image, (TILE_SIZE, TILE_SIZE))\n\n    def draw(self, screen):\n        screen.blit(self.image, (self.x * TILE_SIZE, self.y * TILE_SIZE))  # Asume una variable 'TILE_SIZE'\n",
+                "bottle.py": "import pygame\nfrom config import TILE_SIZE\n\n\nclass Bottle:\n    def __init__(self, x, y, is_taken=False):\n        self.x = x\n        self.y = y\n        self.is_taken = is_taken\n        self.image_taken = pygame.image.load(\"assets/images/empty_bottle.png\")\n        self.image_untaken = pygame.image.load(\"assets/images/filled_bottle.png\")\n        self.image_taken = pygame.transform.scale(self.image_taken, (TILE_SIZE, TILE_SIZE))\n        self.image_untaken = pygame.transform.scale(self.image_untaken, (TILE_SIZE, TILE_SIZE))\n\n    def draw(self, screen):\n        if self.is_taken:\n            screen.blit(self.image_taken, (self.x * TILE_SIZE, self.y * TILE_SIZE))\n        else:\n            screen.blit(self.image_untaken, (self.x * TILE_SIZE, self.y * TILE_SIZE))\n\n    def take(self):\n        self.is_taken = True\n"
+            },
+            "utilities": {
+                "level_generator.py": "# Herramienta para generar niveles autom\u00e1ticamente\nclass LevelGenerator:\n    def __init__(self):\n        pass\n",
+                "sound_manager.py": "# Gesti\u00f3n de sonidos del juego\nclass SoundManager:\n    def __init__(self):\n        pass\n"
+            },
+            "levels": {
+                "level_02.py": "from src.levels.level import Level\nfrom src.game_objects.froggy import Froggy\nfrom src.game_objects.door import Door\nfrom src.game_objects.rock import Rock\nfrom src.game_objects.bottle import Bottle\n\n\nclass Level02(Level):\n    def __init__(self):\n        super().__init__(2)\n        self.froggy = Froggy(0, 0)\n        self.door = Door(9, 9)\n        self.rocks = [Rock(1, 1), Rock(1, 2), Rock(2, 1)]\n        self.bottles = [Bottle(5, 5), Bottle(6, 6), Bottle(7, 7)]\n\n",
+                "level_03.py": "from src.levels.level import Level\nfrom src.game_objects.froggy import Froggy\nfrom src.game_objects.door import Door\nfrom src.game_objects.rock import Rock\nfrom src.game_objects.bottle import Bottle\n\n\nclass Level03(Level):\n    def __init__(self):\n        super().__init__(4)\n        self.froggy = Froggy(0, 0)\n        self.door = Door(9, 9)\n        self.rocks = [\n            Rock(1, 1), Rock(1, 2), Rock(1, 3), Rock(1, 4), Rock(1, 5),\n            Rock(2, 1), Rock(2, 5),\n            Rock(3, 1), Rock(3, 5),\n            Rock(4, 1), \n            Rock(5, 1),  Rock(5, 3),  Rock(5, 5)\n        ]\n        self.bottles = [\n            Bottle(2, 2), Bottle(2, 3), Bottle(2, 4),\n            Bottle(3, 2), Bottle(3, 3), Bottle(3, 4),\n            Bottle(4, 2), Bottle(4, 3), Bottle(4, 4)\n        ]",
+                "level.py": "import importlib\nfrom src.game_objects.froggy import Froggy\nfrom src.game_objects.door import Door\nfrom config import BOARD_SIZE\n\n\nclass Level:\n    def __init__(self, number):\n        self.number = number\n        self.froggy = Froggy(0, 0)  # Posici\u00f3n inicial de Froggy\n        self.door = Door(19, 19)   # Posici\u00f3n de la puerta\n        self.rocks = []            # Lista de rocas\n        self.bottles = []          # Lista de botellas\n        self.finished = False\n\n    def load_level(self):\n        level_module_name = f\"src.levels.level_{str(self.number).zfill(2)}\"\n        level_module = importlib.import_module(level_module_name)\n        level_class = getattr(level_module, f\"Level{str(self.number).zfill(2)}\")\n        level_instance = level_class()\n\n        self.froggy = level_instance.froggy\n        self.door = level_instance.door\n        self.rocks = level_instance.rocks\n        self.bottles = level_instance.bottles\n\n    def is_move_valid(self, x, y):\n        if not (0 <= x < BOARD_SIZE and 0 <= y < BOARD_SIZE):\n            return False  # Movimiento fuera del tablero\n        if any(rock.x == x and rock.y == y for rock in self.rocks):\n            return False  # Hay una roca en la posici\u00f3n\n        if self.door.x == x and self.door.y == y and not self.door.is_open:\n            return False  # La puerta est\u00e1 cerrada\n        if any(bottle.x == x and bottle.y == y and bottle.is_taken for bottle in self.bottles):\n            return False  # Hay una botella no tomada en la posici\u00f3n\n        return True\n\n    def check_item_at(self, x, y):\n        for bottle in self.bottles:\n            if bottle.x == x and bottle.y == y and not bottle.is_taken:\n                bottle.take()\n                self.update_door_state()\n\n    def update_door_state(self):\n        if all(bottle.is_taken for bottle in self.bottles):\n            self.door.open_door()\n\n    def is_completed(self):\n        return self.door.is_open and self.froggy.x == self.door.x and self.froggy.y == self.door.y\n\n    def check_completion(self):\n        if self.is_completed():\n            self.finished = True\n",
+                "level_01.py": "from src.levels.level import Level\nfrom src.game_objects.froggy import Froggy\nfrom src.game_objects.door import Door\nfrom src.game_objects.rock import Rock\nfrom src.game_objects.bottle import Bottle\n\n\nclass Level01(Level):\n    def __init__(self):\n        super().__init__(1)\n        self.froggy = Froggy(0, 0)\n        self.door = Door(10, 10)\n        self.rocks = [Rock(5, 5), Rock(6, 5)]\n        self.bottles = [Bottle(6, 6), Bottle(9, 9)]\n"
+            }
+        }
+    }
+}

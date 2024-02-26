@@ -1,0 +1,33 @@
+FROGGY
+
+
+Quiero que desarrolles un juego en python. El juego se describe en los siguientes items:
+- El juego tendrá interfaz gráfica.
+- El juego se ve desde arriba.
+- El tablero se divide en un tablero con casilleros imaginarios de 20x20.
+- Los elementos posibles del tablero son “rocas”, y “botellas con pociones mágicas”. Además tiene una “puerta” que indica la terminación del nivel.
+- Las botellas tienen dos estados: “tomada” y “sin tomar”. LA puerta tiene dos estados “abierta” o “cerrada”.
+- El personaje es un sapo llamado Froggy.
+- El usuario utilizará las teclas de flecha del teclado para mover a  Froggy haciendolo avanzar de una casilla hacia cualquiera de las cuatro direcciones, pero no en diagonal.
+- Froggy puede moverse al casillero indicado si y solo si se cumple alguna de estas condiciones:
+    - Condición 1: La casilla está vacía.
+    - Condición 2: La casilla tiene una botella sin tomar.
+    - Condición 3: La asidla tiene la puerta abierta.
+- Froggy no puede avanzar a la casilla siguiente si se cumple alguna de las siguientes condiciones:
+    - Condicion 1: la casilla tiene la puerta cerrada.
+    - Condicion 2: la casilla tiene una roca.
+    - Condición 3: la casilla tiene una botella ya tomada.
+- Ademas, si froggy se posa sobre una casilla con una botella “sin tomar”, la botella pasará a estar “tomada”.
+- Si froggy se posa sobre la casilla con la puerta “abierta”, el nivel se da por finalizado.
+- Todos los niveles comienzan con la puerta “cerrada”.
+- La puerta pasara a estado “abierta” si y solo si todas las botellas del nivel están en modo “tomada”.
+- Cada nivel es un archivo llamado “nivel_xx.py” donde xx es el numero del nivel. Cada nivel es un tableo o arreglo de 20x20 elementos con 1 Froggy, 1 puerta, N casilleros vacíos, M botellas “sin tomar” y O rocas.
+- El juego estará hecho con programación orientada a objetos.
+- Froggy será una clase, Puerta será otra clase, Botella será otra clase y Roca será otra clase. Nivel será otra clase. Etc
+- Debe haber un sonido para cuando Froggy toma una botella y otro para cuando pasa de nivel.
+- El nivel termina cuando se han tomado todas las botellas del mismo.
+- El juego tendrá inicialmente 3 niveles de más fácil a más difícil.
+- Debes generar los niveles automáticamente.
+- Al terminar todos los niveles aparece una pantalla de finalización con felicitaciones.
+
+Qué más necesitas saber para desarrollar este juego?
