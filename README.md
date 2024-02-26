@@ -44,7 +44,7 @@ You'll also need Pygame. But don't worry, it's included in our requirements!
 
 1. Clone this repo to your local machine using:
    ```
-   git clone https://your-repo-link.git
+   git clone https://github.com/nachokhan/froggys_adventure_game
    ```
 2. Navigate to the game's directory:
    ```
