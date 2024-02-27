@@ -7,7 +7,7 @@ class GameBoard:
         self.load_level(self.level_n)
 
     def load_level(self, number):
-        self.level = Level(number)
+        self.level = Level(number, "nivel")
         self.level_n = number
         self.level.load_level()
 

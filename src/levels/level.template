@@ -7,8 +7,9 @@ from src.game_objects.bottle import Bottle
 
 class Level01(Level):
     def __init__(self):
-        super().__init__(1, "Prueba_loca")
-        self.froggy = Froggy(0, 0)
-        self.door = Door(10, 10)
-        self.rocks = [Rock(5, 5), Rock(6, 5)]
-        self.bottles = [Bottle(6, 6), Bottle(9, 9)]
+        super().__init__(1, _name_)
+        self.froggy = _froggy_
+        self.door = _door_
+        self.rocks = _rocks_
+        self.bottles = _bottles_
+

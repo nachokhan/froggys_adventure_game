@@ -7,7 +7,7 @@ from src.game_objects.bottle import Bottle
 
 class Level03(Level):
     def __init__(self):
-        super().__init__(4)
+        super().__init__(3, "De Enserio")
         self.froggy = Froggy(0, 0)
         self.door = Door(9, 9)
         self.rocks = [

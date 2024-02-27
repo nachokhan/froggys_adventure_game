@@ -1,0 +1,10 @@
+The level generator is a separated python script.
+The script works with pygame.
+On Any kind of change, it will ask for save the changes.
+The ain screen of program consist on a screen divided in 2 parts: one is the gae board based on config.py sizes. the other one is the panel.
+The panel has oen block with options as buttons: NEW, OPEN, SAVE, EXIT.
+The panel has another block with tha game images of the elements: froggy, door, rock, bottle, "X" (for remove)
+The user can select one of the elements of the elements-block.
+The user might click on the board to add the selected element if the current element of the cell is none or another element than the selected one. 
+The user might click on the board to remove an element if the selected element is X.
+

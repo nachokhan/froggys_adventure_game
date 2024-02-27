@@ -5,7 +5,8 @@ from config import BOARD_SIZE
 
 
 class Level:
-    def __init__(self, number):
+    def __init__(self, number, name):
+        self.name = name
         self.number = number
         self.froggy = Froggy(0, 0)  # Posición inicial de Froggy
         self.door = Door(19, 19)   # Posición de la puerta
