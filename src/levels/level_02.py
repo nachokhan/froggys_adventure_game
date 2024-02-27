@@ -12,4 +12,3 @@ class Level02(Level):
         self.door = Door(9, 9)
         self.rocks = [Rock(1, 1), Rock(1, 2), Rock(2, 1)]
         self.bottles = [Bottle(5, 5), Bottle(6, 6), Bottle(7, 7)]
-
